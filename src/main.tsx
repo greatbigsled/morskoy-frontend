@@ -7,7 +7,7 @@ import App from "./App.tsx";
 import Login from "./auth/Login.tsx";
 import Register from "./auth/Register.tsx";
 import AuthLayout from "./auth/AuthLayout.tsx";
-
+import './i18n';
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
