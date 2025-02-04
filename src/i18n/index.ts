@@ -1,6 +1,6 @@
-import i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
-import LanguageDetector from 'i18next-browser-languagedetector';
+import i18n from "i18next";
+import { initReactI18next } from "react-i18next";
+import LanguageDetector from "i18next-browser-languagedetector";
 
 i18n
   // detect user language
@@ -12,7 +12,7 @@ i18n
   // for all options read: https://www.i18next.com/overview/configuration-options
   .init({
     debug: true,
-    fallbackLng: 'en',
+    fallbackLng: "en",
     interpolation: {
       escapeValue: false, // not needed for react as it escapes by default
     },
@@ -20,19 +20,31 @@ i18n
       en: {
         translation: {
           auth: {
-            createAccount: 'Create new account',
-            create: 'Create',
-            login: 'Login',
-            username: 'Username',
-            password: 'Password',
-            repeatPassword: 'Repeat Password',
-            alreadyHaveAccount: 'Already have account?',
-            dontHaveAccount: 'Don\'t have account?',
-          }
+            createAccount: "Create new account",
+            create: "Create",
+            login: "Login",
+            username: "Username",
+            password: "Password",
+            repeatPassword: "Repeat Password",
+            alreadyHaveAccount: "Already have account?",
+            dontHaveAccount: "Don't have account?",
+          },
+          bfield: {
+            a: "A",
+            b: "B",
+            c: "C",
+            d: "D",
+            e: "E",
+            f: "F",
+            g: "G",
+            h: "H",
+            i: "I",
+            j: "J",
+          },
           // here we will place our translations...
-        }
-      }
-    }
+        },
+      },
+    },
   });
 
 export default i18n;

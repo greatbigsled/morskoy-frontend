@@ -1,0 +1,128 @@
+.battlefield {
+  /*--cell-border-color: #d2d2d2;*/
+  --cell-border-color: pink;
+  --ship-border-color: #0000ff;
+  --ship-border: 1px;
+  --cell-h: 40px;
+  --cell-w: 40px;
+}
+
+.fieldRow {
+  display: flex;
+}
+.indexCell {
+  width: calc(var(--cell-w) + var(--ship-border));
+  height: calc(var(--cell-h) + var(--ship-border));
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+}
+.numericalIndex {
+}
+
+.grid {
+  display: grid;
+  gap: 1px;
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(10, 1fr);
+  background-color: var(--cell-border-color);
+  border: 1px solid var(--cell-border-color);
+}
+.cell {
+  position: relative;
+  width: var(--cell-w);
+  height: var(--cell-h);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /*border: 1px solid var(--cell-border-color);*/
+  font-size: 0px;
+  background-color: #ffffff;
+}
+
+.cell:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+.cellEmpty {
+}
+.cellMiss::after {
+  content: '';
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #000000;
+}
+
+.cellShip {
+  position: absolute;
+  width: calc(var(--cell-w) + var(--ship-border) * 2);
+  height: calc(var(--cell-h) + var(--ship-border) * 2);
+  left: calc(var(--ship-border) * -1);
+  top: calc(var(--ship-border) * -1);
+  background-color: rgba(0, 0, 255, 0.2);
+  border: var(--ship-border) solid transparent;
+}
+.cellShipFull {
+  composes: cellShip;
+  border-color: var(--ship-border-color);
+}
+.cellShipTop {
+  composes: cellShip;
+  border-color: var(--ship-border-color);
+  border-bottom-color: transparent;
+}
+.cellShipBottom {
+  composes: cellShip;
+  border-color: var(--ship-border-color);
+  border-top-color: transparent;
+}
+.cellShipLeft {
+  composes: cellShip;
+  border-color: var(--ship-border-color);
+  border-right-color: transparent;
+}
+.cellShipRight {
+  composes: cellShip;
+  border-color: var(--ship-border-color);
+  border-left-color: transparent;
+}
+.cellShipMiddleH {
+  composes: cellShip;
+  border-top-color: var(--ship-border-color);
+  border-bottom-color: var(--ship-border-color);
+}
+.cellShipMiddleV {
+  composes: cellShip;
+  border-left-color: var(--ship-border-color);
+  border-right-color: var(--ship-border-color);
+}
+.cellShipHit {
+}
+
+/* ship creator */
+.shipBlueprint {
+  height: var(--cell-h);
+  width: var(--cell-w);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: var(--ship-border) solid var(--ship-border-color);
+  font-size: 12px;
+}
+.ship1 {
+  composes: shipBlueprint;
+}
+.ship2 {
+  composes: shipBlueprint;
+  width: calc(var(--cell-w) * 2);
+}
+.ship3 {
+  composes: shipBlueprint;
+  width: calc(var(--cell-w) * 3);
+}
+.ship4 {
+  composes: shipBlueprint;
+  width: calc(var(--cell-w) * 4);
+}
