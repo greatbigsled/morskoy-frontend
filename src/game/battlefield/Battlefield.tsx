@@ -1,61 +1,67 @@
 // import { useTranslation } from "react-i18next";
 // import { useState } from "react";
 import camelCase from 'lodash-es/camelCase';
-
-import fieldCss from './battlefield.module.css';
+import isEqual from 'lodash-es/isEqual';
 import { useTranslation } from 'react-i18next';
-import { BattlefieldMatrix, BattlefieldRow, BCell } from '../battlefield.ts';
 
-// type ShipType =
-//   | "SHIP_FULL"
-//   | "SHIP_TOP"
-//   | "SHIP_BOTTOM"
-//   | "SHIP_LEFT"
-//   | "SHIP_RIGHT"
-//   | "SHIP_MIDDLE_H"
-//   | "SHIP_MIDDLE_V";
-//
-// type CellN = {
-//   index: [number, number];
-//   shipType: ShipType | null;
-//   shot: boolean;
-// };
-//
-// type Cell =
-//   | "EMPTY"
-//   | "MISS"
-//   | "SHIP_FULL"
-//   | "SHIP_TOP"
-//   | "SHIP_BOTTOM"
-//   | "SHIP_LEFT"
-//   | "SHIP_RIGHT"
-//   | "SHIP_MIDDLE_H"
-//   | "SHIP_MIDDLE_V"
-//   | "SHIP_HIT"
-//   | "SHIP_SUNK";
+import {
+  BattlefieldMatrix,
+  BattlefieldRow,
+  BCell,
+  GridShipCell,
+  ShipCellType,
+} from '../battlefield.ts';
+import fieldCss from './battlefield.module.css';
 
-function Cell({ cell, onClick }: { cell: BCell; onClick: () => void }) {
-  const { shipType, shot } = cell;
-  const isMiss = !shipType && shot;
+function Cell({
+  cell,
+  previewCellType,
+  onClick,
+  onMouseEnter,
+  onMouseLeave,
+}: {
+  cell: BCell;
+  previewCellType: ShipCellType | null;
+  onClick: () => void;
+  onMouseEnter: () => void;
+  onMouseLeave: () => void;
+}) {
+  const { shipCellType, shot } = cell;
+  const isMiss = !shipCellType && shot;
   const cellShipCss =
-    (shipType &&
-      `${fieldCss.cellShip} ${fieldCss[camelCase('CELL_' + shipType)]}`) ||
-    '';
-  console.log(`${fieldCss.cellShip} ${fieldCss[camelCase('CELL_' + shipType)]}`)
+    (shipCellType &&
+      `${fieldCss.cellShip} ${fieldCss[camelCase('CELL_' + shipCellType)]}`) ||
+    null;
+  const previewShipCss =
+    (previewCellType &&
+      `${fieldCss.cellShip} ${fieldCss[camelCase('CELL_' + previewCellType)]} ${fieldCss.cellPreviewShipCss}`) ||
+    null;
   const cellCss = `${fieldCss.cell} ${isMiss ? fieldCss.cellMiss : ''}`;
   return (
-    <div className={cellCss} onClick={onClick}>
-      <div className={cellShipCss}></div>
+    <div
+      className={cellCss}
+      onClick={onClick}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+    >
+      {cellShipCss && <div className={cellShipCss}></div>}
+      {previewShipCss && <div className={previewShipCss}></div>}
     </div>
   );
 }
 
 export function Battlefield({
   grid,
+  previewShip,
   onCellClick,
+  onCellMouseEnter,
+  onCellMouseLeave,
 }: {
   grid: BattlefieldMatrix;
+  previewShip: null | GridShipCell[];
   onCellClick: (cell: BCell) => void;
+  onCellMouseEnter: (cell: BCell) => void;
+  onCellMouseLeave: (cell: BCell) => void;
 }) {
   const { t } = useTranslation();
 
@@ -84,7 +90,15 @@ export function Battlefield({
                 {row.map((cell: BCell, ci) => (
                   <Cell
                     cell={cell}
+                    previewCellType={
+                      (previewShip &&
+                        previewShip.find((p) => isEqual(p.index, cell.index))
+                          ?.shipCellType) ||
+                      null
+                    }
                     onClick={() => onCellClick(cell)}
+                    onMouseEnter={() => onCellMouseEnter(cell)}
+                    onMouseLeave={() => onCellMouseLeave(cell)}
                     key={`cell-${ri}-${ci}`}
                   />
                 ))}

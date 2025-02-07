@@ -1,21 +1,20 @@
-import { makeObservable, observable, action } from "mobx";
+import { makeObservable, observable, action, makeAutoObservable } from 'mobx';
+import { RootStore } from './store.ts';
 
-export class User {
-  username = "";
+export class UserStore {
+  rootStore: RootStore;
+  username = '';
+  id = null;
 
-  constructor() {
-    makeObservable(this, {
+  constructor(rootStore: RootStore) {
+    makeAutoObservable(this, {
       username: observable,
-      signIn: action,
-      register: action,
+      id: observable,
     });
-    this.title = title;
+    this.rootStore = rootStore;
   }
 
   signIn(name: string) {
-    this.username = name;
-  }
-  register(name: string) {
     this.username = name;
   }
 }

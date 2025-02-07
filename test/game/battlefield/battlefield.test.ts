@@ -3,6 +3,7 @@ import {
   canCreateShip,
   createEmptyGrid,
   createNewShipCells,
+  createPreviewShip,
   NewShip,
 } from '../../../src/game/battlefield';
 
@@ -14,7 +15,7 @@ test('Creates proper empty grid', () => {
   });
   emptyGrid.forEach((row) => {
     row.forEach((cell) => {
-      expect(cell.shipType).toBe(null);
+      expect(cell.shipCellType).toBe(null);
       expect(cell.shot).toBe(false);
       expect(cell.index[0]).toBeLessThanOrEqual(9);
       expect(cell.index[0]).toBeGreaterThanOrEqual(0);
@@ -26,68 +27,86 @@ test('Creates proper empty grid', () => {
 
 test('canCreateShip works properly', () => {
   const correctShipH: NewShip = {
-    startIndex: { r: 0, c: 0 },
-    direction: 'H',
-    cellCount: 4,
+    index: [0, 0],
+    shipType: 'H4',
   };
   expect(canCreateShip(correctShipH)).toBeTruthy();
 
   const wrongShipH: NewShip = {
-    startIndex: { r: 0, c: 7 },
-    direction: 'H',
-    cellCount: 4,
+    index: [0, 7],
+    shipType: 'H4',
   };
   expect(canCreateShip(wrongShipH)).toBeFalsy();
 
   const correctShipV: NewShip = {
-    startIndex: { r: 6, c: 1 },
-    direction: 'V',
-    cellCount: 4,
+    index: [6, 1],
+    shipType: 'V4',
   };
   expect(canCreateShip(correctShipV)).toBeTruthy();
 
   const wrongShipV: NewShip = {
-    startIndex: { r: 7, c: 1 },
-    direction: 'V',
-    cellCount: 4,
+    index: [7, 1],
+    shipType: 'V4',
   };
   expect(canCreateShip(wrongShipV)).toBeFalsy();
 
   const wrongShipHV: NewShip = {
-    startIndex: { r: 7, c: 9 },
-    direction: 'H',
-    cellCount: 2,
+    index: [7, 9],
+    shipType: 'H2',
   };
   expect(canCreateShip(wrongShipHV)).toBeFalsy();
 });
 
 test('Creates proper createNewShipCells x4', () => {
   const correctShipH: NewShip = {
-    startIndex: { r: 0, c: 0 },
-    direction: 'H',
-    cellCount: 4,
+    index: [0, 0],
+    shipType: 'H4',
   };
   const newShipCells = createNewShipCells(correctShipH);
   expect(newShipCells).toEqual([
     {
-      r: 0,
-      c: 0,
-      shipType: 'SHIP_LEFT',
+      index: [0, 0],
+      shipCellType: 'SHIP_LEFT',
     },
     {
-      r: 0,
-      c: 1,
-      shipType: 'SHIP_MIDDLE_H',
+      index: [0, 1],
+      shipCellType: 'SHIP_MIDDLE_H',
     },
     {
-      r: 0,
-      c: 2,
-      shipType: 'SHIP_MIDDLE_H',
+      index: [0, 2],
+      shipCellType: 'SHIP_MIDDLE_H',
     },
     {
-      r: 0,
-      c: 3,
-      shipType: 'SHIP_RIGHT',
+      index: [0, 3],
+      shipCellType: 'SHIP_RIGHT',
     },
+  ]);
+});
+
+test('createPreviewShip creates ships on regular place when they fit', () => {
+  const previewShip1 = createPreviewShip([0, 0], 'H4');
+  expect(previewShip1.map((p) => p.index)).toEqual([
+    [0, 0],
+    [0, 1],
+    [0, 2],
+    [0, 3],
+  ]);
+
+  const previewShip3 = createPreviewShip([9, 9], 'H1');
+  expect(previewShip3.map((p) => p.index)).toEqual([[9, 9]]);
+});
+
+test('createPreviewShip fits ships in grid when they do not fit by changing their position', () => {
+  const previewShip1 = createPreviewShip([5, 9], 'H3');
+  expect(previewShip1.map((p) => p.index)).toEqual([
+    [5, 7],
+    [5, 8],
+    [5, 9],
+  ]);
+
+  const previewShip2 = createPreviewShip([9, 9], 'V2');
+  expect(previewShip2.map((p) => p.index)).toEqual([
+    [8, 9],
+    [9, 9],
   ]);
 });

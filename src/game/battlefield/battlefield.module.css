@@ -2,6 +2,7 @@
   /*--cell-border-color: #d2d2d2;*/
   --cell-border-color: pink;
   --ship-border-color: #0000ff;
+  --preview-ship-border-color: #00ff00;
   --ship-border: 1px;
   --cell-h: 40px;
   --cell-w: 40px;
@@ -98,7 +99,8 @@
   border-left-color: var(--ship-border-color);
   border-right-color: var(--ship-border-color);
 }
-.cellShipHit {
+.cellPreviewShipCss {
+  border-color: var(--preview-ship-border-color);
 }
 
 /* ship creator */

@@ -1,31 +1,38 @@
-import { useTranslation } from 'react-i18next';
+import { useState } from 'react';
 
 import fieldCss from './battlefield.module.css';
 import { Battlefield } from './Battlefield.tsx';
-import { BCell, createEmptyGrid, createShip } from '../battlefield.ts';
-import { useState } from 'react';
+import {
+  BCell,
+  createPreviewShip,
+  ShipType,
+  GridShipCell,
+} from '../battlefield.ts';
+import { useStore } from '../../store/useStore.ts';
 
-export function BattlefieldCreator() {
-  const { t } = useTranslation();
-  const [battleGrid, setBattleGrid] = useState(createEmptyGrid());
+const BattlefieldCreator = () => {
+  const bfStore = useStore().battlefieldStore;
   const [newShip, setNewShip] = useState<{
-    direction: 'H' | 'V';
-    cellCount: 1 | 2 | 3 | 4;
+    shipType: ShipType;
   } | null>(null);
   const onCellClick = (cell: BCell) => {
-    console.log(cell);
     if (newShip) {
-      const newGrid = createShip(battleGrid, {
-        startIndex: {
-          r: cell.index[0],
-          c: cell.index[1],
-        },
-        cellCount: newShip.cellCount,
-        direction: newShip.direction,
+      bfStore.addNewShip({
+        index: cell.index,
+        shipType: newShip.shipType,
       });
-      setBattleGrid(newGrid);
-      console.log(newGrid);
     }
+  };
+
+  const [previewShip, setPreviewShip] = useState<null | GridShipCell[]>(null);
+  const onCellMouseEnter = (cell: BCell) => {
+    if (newShip) {
+      setPreviewShip(createPreviewShip(cell.index, newShip?.shipType));
+    }
+  };
+
+  const onCellMouseLeave = (cell: BCell) => {
+    // console.log(cell);
   };
 
   return (
@@ -33,9 +40,7 @@ export function BattlefieldCreator() {
       <h4>Create battlefield</h4>
       <div>
         <button>Create empty</button>
-        <p>
-          Ship to create is: {newShip?.direction} {newShip?.cellCount}
-        </p>
+        <p>Ship to create is: {newShip?.shipType}</p>
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -44,28 +49,28 @@ export function BattlefieldCreator() {
           <div>
             <div>
               <div
-                onClick={() => setNewShip({ direction: 'H', cellCount: 4 })}
+                onClick={() => setNewShip({ shipType: 'H4' })}
                 className={fieldCss.ship4}
               >
                 ship 4
               </div>
               <br />
               <div
-                onClick={() => setNewShip({ direction: 'H', cellCount: 3 })}
+                onClick={() => setNewShip({ shipType: 'H3' })}
                 className={fieldCss.ship3}
               >
                 ship 3
               </div>
               <br />
               <div
-                onClick={() => setNewShip({ direction: 'H', cellCount: 2 })}
+                onClick={() => setNewShip({ shipType: 'H2' })}
                 className={fieldCss.ship2}
               >
                 ship 2
               </div>
               <br />
               <div
-                onClick={() => setNewShip({ direction: 'H', cellCount: 1 })}
+                onClick={() => setNewShip({ shipType: 'H1' })}
                 className={fieldCss.ship1}
               >
                 ship 1
@@ -74,11 +79,17 @@ export function BattlefieldCreator() {
           </div>
         </div>
         <div>
-          <Battlefield grid={battleGrid} onCellClick={onCellClick} />
+          <Battlefield
+            grid={bfStore.grid}
+            previewShip={previewShip}
+            onCellClick={onCellClick}
+            onCellMouseEnter={onCellMouseEnter}
+            onCellMouseLeave={onCellMouseLeave}
+          />
         </div>
       </div>
     </div>
   );
-}
+};
 
 export default BattlefieldCreator;
