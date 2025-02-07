@@ -16,12 +16,14 @@ import fieldCss from './battlefield.module.css';
 function Cell({
   cell,
   previewCellType,
+  isValidPreview,
   onClick,
   onMouseEnter,
   onMouseLeave,
 }: {
   cell: BCell;
   previewCellType: ShipCellType | null;
+  isValidPreview: boolean,
   onClick: () => void;
   onMouseEnter: () => void;
   onMouseLeave: () => void;
@@ -34,7 +36,7 @@ function Cell({
     null;
   const previewShipCss =
     (previewCellType &&
-      `${fieldCss.cellShip} ${fieldCss[camelCase('CELL_' + previewCellType)]} ${fieldCss.cellPreviewShipCss}`) ||
+      `${fieldCss.cellShip} ${fieldCss[camelCase('CELL_' + previewCellType)]} ${isValidPreview ? fieldCss.cellShipPreview : fieldCss.cellShipPreviewInvalid}`) ||
     null;
   const cellCss = `${fieldCss.cell} ${isMiss ? fieldCss.cellMiss : ''}`;
   return (
@@ -58,7 +60,10 @@ export function Battlefield({
   onCellMouseLeave,
 }: {
   grid: BattlefieldMatrix;
-  previewShip: null | GridShipCell[];
+  previewShip: null | {
+    isValid: boolean;
+    shipCells: GridShipCell[];
+  };
   onCellClick: (cell: BCell) => void;
   onCellMouseEnter: (cell: BCell) => void;
   onCellMouseLeave: (cell: BCell) => void;
@@ -92,10 +97,12 @@ export function Battlefield({
                     cell={cell}
                     previewCellType={
                       (previewShip &&
-                        previewShip.find((p) => isEqual(p.index, cell.index))
-                          ?.shipCellType) ||
+                        previewShip.shipCells.find((p) =>
+                          isEqual(p.index, cell.index),
+                        )?.shipCellType) ||
                       null
                     }
+                    isValidPreview={previewShip?.isValid}
                     onClick={() => onCellClick(cell)}
                     onMouseEnter={() => onCellMouseEnter(cell)}
                     onMouseLeave={() => onCellMouseLeave(cell)}

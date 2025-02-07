@@ -7,6 +7,7 @@ import {
   createPreviewShip,
   ShipType,
   GridShipCell,
+  isValidShipPlacement,
 } from '../battlefield.ts';
 import { useStore } from '../../store/useStore.ts';
 
@@ -15,19 +16,32 @@ const BattlefieldCreator = () => {
   const [newShip, setNewShip] = useState<{
     shipType: ShipType;
   } | null>(null);
-  const onCellClick = (cell: BCell) => {
-    if (newShip) {
+
+  const onCellClick = () => {
+    if (previewShip && previewShip.isValid) {
       bfStore.addNewShip({
-        index: cell.index,
-        shipType: newShip.shipType,
+        index: previewShip.shipCells[0].index,
+        shipType: previewShip.shipType,
       });
     }
   };
 
-  const [previewShip, setPreviewShip] = useState<null | GridShipCell[]>(null);
+  const [previewShip, setPreviewShip] = useState<null | {
+    isValid: boolean;
+    shipCells: GridShipCell[];
+    shipType: ShipType;
+  }>(null);
   const onCellMouseEnter = (cell: BCell) => {
     if (newShip) {
-      setPreviewShip(createPreviewShip(cell.index, newShip?.shipType));
+      const previewShipCells = createPreviewShip(cell.index, newShip?.shipType);
+      setPreviewShip({
+        isValid: isValidShipPlacement(bfStore.grid, {
+          index: previewShipCells[0].index,
+          shipType: newShip.shipType,
+        }),
+        shipCells: previewShipCells,
+        shipType: newShip.shipType,
+      });
     }
   };
 

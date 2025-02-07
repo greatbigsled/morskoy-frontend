@@ -3,6 +3,9 @@
   --cell-border-color: pink;
   --ship-border-color: #0000ff;
   --preview-ship-border-color: #00ff00;
+  --preview-ship-border-color-invalid: #ff0000;
+  --preview-ship-backgound: #00ff00;
+  --preview-ship-background-invalid: #ff0000;
   --ship-border: 1px;
   --cell-h: 40px;
   --cell-w: 40px;
@@ -99,8 +102,13 @@
   border-left-color: var(--ship-border-color);
   border-right-color: var(--ship-border-color);
 }
-.cellPreviewShipCss {
+.cellShipPreview {
   border-color: var(--preview-ship-border-color);
+  background: var(--preview-ship-backgound);
+}
+.cellShipPreviewInvalid {
+  border-color: var(--preview-ship-border-color);
+  background: var(--preview-ship-background-invalid);
 }
 
 /* ship creator */
