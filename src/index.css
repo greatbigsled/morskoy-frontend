@@ -1,7 +1,23 @@
-*, *:before, *:after {
+*,
+*:before,
+*:after {
   box-sizing: border-box;
 }
 :root {
+  --cell-border-color: oklch(86.4% 0.075 236.79);
+  --ship-border-color: oklch(66.5% 0.188 236.79);
+  --preview-ship-border-color: oklch(64.3% 0.229 300.06);
+  --preview-ship-border-color-invalid: oklch(56.6% 0.255 25.94);
+  --preview-ship-backgound: oklch(
+    from var(--preview-ship-border-color) l c h / 0.4
+  );
+  --preview-ship-background-invalid: oklch(
+    from var(--preview-ship-border-color-invalid) l c h / 0.4
+  );
+  --ship-border: 1px;
+  --cell-h: 30px;
+  --cell-w: 30px;
+
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
@@ -16,12 +32,10 @@
   -moz-osx-font-smoothing: grayscale;
 }
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  display: grid;
+  width: 100%;
+  height: 100%;
 }
-
 
 a {
   font-weight: 500;
@@ -34,7 +48,7 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
+  display: grid;
   place-items: center;
   min-width: 320px;
   min-height: 100vh;

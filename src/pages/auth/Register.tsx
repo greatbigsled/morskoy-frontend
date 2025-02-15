@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { NavLink } from "react-router";
 
 import authCss from "./auth.module.css";
-import genCss from "./../styles/general.module.css";
+import genCss from "../../styles/general.module.css";
 
 function Register() {
   const { t } = useTranslation();

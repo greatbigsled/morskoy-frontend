@@ -1,5 +1,3 @@
-// import { useTranslation } from "react-i18next";
-// import { useState } from "react";
 import camelCase from 'lodash-es/camelCase';
 import isEqual from 'lodash-es/isEqual';
 import { useTranslation } from 'react-i18next';
@@ -23,8 +21,8 @@ function Cell({
 }: {
   cell: BCell;
   previewCellType: ShipCellType | null;
-  isValidPreview: boolean,
-  onClick: () => void;
+  isValidPreview: boolean;
+  onClick: (cell: BCell) => void;
   onMouseEnter: () => void;
   onMouseLeave: () => void;
 }) {
@@ -42,7 +40,7 @@ function Cell({
   return (
     <div
       className={cellCss}
-      onClick={onClick}
+      onClick={() => onClick(cell)}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
@@ -102,7 +100,7 @@ export function Battlefield({
                         )?.shipCellType) ||
                       null
                     }
-                    isValidPreview={previewShip?.isValid}
+                    isValidPreview={previewShip?.isValid || false}
                     onClick={() => onCellClick(cell)}
                     onMouseEnter={() => onCellMouseEnter(cell)}
                     onMouseLeave={() => onCellMouseLeave(cell)}

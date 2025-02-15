@@ -1,0 +1,31 @@
+.main {
+  display: grid;
+  grid-template-rows: 50px 1fr 50px;
+  height: 100%;
+}
+
+.widthLimiter {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  --sky-blue: oklch(81.48% 0.0819 225.75);
+  background-color: var(--sky-blue);
+  color: oklch(from var(--sky-blue) calc(l - 10) c calc(h + 180));
+}
+.headerTitle {
+  font-size: 30px;
+}
+
+.footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  place-items: center;
+  --sea-blue: oklch(89.28% 0.0539 250.99);
+  background-color: var(--sea-blue);
+}

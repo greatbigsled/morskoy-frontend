@@ -19,10 +19,12 @@ i18n
     resources: {
       en: {
         translation: {
+          gameTitle: 'Battle Ships',
           auth: {
             createAccount: "Create new account",
             create: "Create",
             login: "Login",
+            or: 'or',
             username: "Username",
             password: "Password",
             repeatPassword: "Repeat Password",
@@ -41,6 +43,13 @@ i18n
             i: "I",
             j: "J",
           },
+          creator: {
+            rotateShip: 'Rotate ship'
+          },
+          game: {
+            yourGrid: 'Your grid',
+            opponentsGrid: 'Opponent\'s grid',
+          }
           // here we will place our translations...
         },
       },

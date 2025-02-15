@@ -17,6 +17,10 @@ export type ShipCellType =
 export type BCell = {
   index: [number, number];
   playIndex: [number, string];
+  userShip: {
+    length: number;
+    index: number;
+  } | null;
   shipCellType: ShipCellType | null;
   shot: boolean;
 };
@@ -37,6 +41,7 @@ export function createEmptyGrid(): BattlefieldMatrix {
       return {
         index: [rowIndex, cellIndex],
         playIndex: [numIndex, alphaIndex],
+        userShip: null,
         shipCellType: null,
         shot: false,
       } as BCell;
