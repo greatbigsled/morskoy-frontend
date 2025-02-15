@@ -1,9 +1,9 @@
 import { expect, test } from 'vitest';
 import {
-  canCreateShip,
   createEmptyGrid,
   createNewShipCells,
   createPreviewShip,
+  createRandomShipGrid,
   NewShip,
 } from '../../../src/game/battlefield';
 
@@ -23,38 +23,6 @@ test('Creates proper empty grid', () => {
       expect(cell.index[1]).toBeGreaterThanOrEqual(0);
     });
   });
-});
-
-test('canCreateShip works properly', () => {
-  const correctShipH: NewShip = {
-    index: [0, 0],
-    shipType: 'H4',
-  };
-  expect(canCreateShip(correctShipH)).toBeTruthy();
-
-  const wrongShipH: NewShip = {
-    index: [0, 7],
-    shipType: 'H4',
-  };
-  expect(canCreateShip(wrongShipH)).toBeFalsy();
-
-  const correctShipV: NewShip = {
-    index: [6, 1],
-    shipType: 'V4',
-  };
-  expect(canCreateShip(correctShipV)).toBeTruthy();
-
-  const wrongShipV: NewShip = {
-    index: [7, 1],
-    shipType: 'V4',
-  };
-  expect(canCreateShip(wrongShipV)).toBeFalsy();
-
-  const wrongShipHV: NewShip = {
-    index: [7, 9],
-    shipType: 'H2',
-  };
-  expect(canCreateShip(wrongShipHV)).toBeFalsy();
 });
 
 test('Creates proper createNewShipCells x4', () => {
@@ -109,4 +77,29 @@ test('createPreviewShip fits ships in grid when they do not fit by changing thei
     [8, 9],
     [9, 9],
   ]);
+});
+
+test('Creates correct random ship quantity', () => {
+  const { userShips } = createRandomShipGrid();
+  for (const [shipLength, ships] of Object.entries(userShips)) {
+    expect(ships.length).toEqual(5 - Number(shipLength));
+  }
+});
+
+test('Creates random ships at correct indicies', () => {
+  const { grid, userShips } = createRandomShipGrid();
+  for (const [shipLength, ships] of Object.entries(userShips)) {
+    ships.forEach((ship: NewShip) => {
+      const isHorizontal = ship.shipType.startsWith('H');
+      const [r, c] = ship.index;
+      const gCell = grid[r][c];
+      if (ship.shipType === 'H1') {
+        expect(gCell.shipCellType).toEqual('SHIP_FULL');
+      } else if (isHorizontal) {
+        expect(gCell.shipCellType).toEqual('SHIP_LEFT');
+      } else {
+        expect(gCell.shipCellType).toEqual('SHIP_TOP');
+      }
+    });
+  }
 });

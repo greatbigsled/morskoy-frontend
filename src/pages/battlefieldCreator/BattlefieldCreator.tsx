@@ -70,7 +70,7 @@ const BattlefieldCreator = () => {
                 onClick={() => setNewShip({ shipType: 'H3' })}
                 className={fieldCss.ship3}
               >
-                ship 3
+                H3
               </button>
               <br />
               <button
@@ -78,7 +78,7 @@ const BattlefieldCreator = () => {
                 onClick={() => setNewShip({ shipType: 'H2' })}
                 className={fieldCss.ship2}
               >
-                ship 2
+                H2
               </button>
               <br />
               <button
@@ -86,7 +86,7 @@ const BattlefieldCreator = () => {
                 onClick={() => setNewShip({ shipType: 'H1' })}
                 className={fieldCss.ship1}
               >
-                ship 1
+                H1
               </button>
             </div>
           </div>

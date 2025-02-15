@@ -171,3 +171,46 @@ export function isValidShipPlacement(
   });
   return isValid;
 }
+
+export function createRandomShipGrid() {
+  let newGrid = createEmptyGrid();
+  const userShips: { [key: number]: NewShip[] } = {
+    1: [],
+    2: [],
+    3: [],
+    4: [],
+  };
+  const shipLengths = [4, 3, 2, 1];
+  shipLengths.forEach((shipLength) => {
+    const toCreate = 5 - shipLength;
+    let created = 0;
+    while (created < toCreate) {
+      const shipDirection =
+        shipLength === 1 ? 'H' : Math.random() > 0.5 ? 'H' : 'V';
+      const isHorizontal = shipDirection === 'H';
+      const potentialRow = Math.floor(
+        Math.random() *
+          (isHorizontal ? MAX_INDEX : MAX_INDEX - (shipLength - 1)),
+      );
+      const potentialCell = Math.floor(
+        Math.random() *
+          (isHorizontal ? MAX_INDEX - (shipLength - 1) : MAX_INDEX),
+      );
+      const shipType = (shipDirection + shipLength) as ShipType;
+      const newShip: NewShip = {
+        index: [potentialRow, potentialCell],
+        shipType,
+      };
+      if (isValidShipPlacement(newGrid, newShip)) {
+        newGrid = addShipToGrid(newGrid, newShip);
+        userShips[shipLength].push(newShip);
+        created = created + 1;
+      }
+    }
+  });
+
+  return {
+    grid: newGrid,
+    userShips,
+  };
+}

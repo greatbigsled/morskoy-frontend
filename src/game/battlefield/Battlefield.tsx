@@ -26,8 +26,10 @@ function Cell({
   onMouseEnter: () => void;
   onMouseLeave: () => void;
 }) {
-  const { shipCellType, shot } = cell;
+  const shipCellType = cell.shipCellType;
+  const shot = cell.shot;
   const isMiss = !shipCellType && shot;
+  const isHit = shipCellType && shot;
   const cellShipCss =
     (shipCellType &&
       `${fieldCss.cellShip} ${fieldCss[camelCase('CELL_' + shipCellType)]}`) ||
@@ -46,6 +48,7 @@ function Cell({
     >
       {cellShipCss && <div className={cellShipCss}></div>}
       {previewShipCss && <div className={previewShipCss}></div>}
+      {isHit && <div className={fieldCss.isHit}></div>}
     </div>
   );
 }
@@ -53,6 +56,7 @@ function Cell({
 export function Battlefield({
   grid,
   previewShip,
+  disabled,
   onCellClick,
   onCellMouseEnter,
   onCellMouseLeave,
@@ -62,6 +66,7 @@ export function Battlefield({
     isValid: boolean;
     shipCells: GridShipCell[];
   };
+  disabled?: boolean;
   onCellClick: (cell: BCell) => void;
   onCellMouseEnter: (cell: BCell) => void;
   onCellMouseLeave: (cell: BCell) => void;
@@ -70,7 +75,7 @@ export function Battlefield({
 
   return (
     <>
-      <div>
+      <div className={disabled ? fieldCss.disabled : ''}>
         <div className={fieldCss.fieldRow}>
           <div className={fieldCss.indexCell}></div>
           {['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'].map((i) => (

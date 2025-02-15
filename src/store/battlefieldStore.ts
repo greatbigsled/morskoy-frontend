@@ -1,8 +1,9 @@
-import { observable, computed, action, makeAutoObservable } from 'mobx';
+import { observable, computed, action, makeObservable } from 'mobx';
 import {
   BattlefieldMatrix,
   createEmptyGrid,
   createNewShipCells,
+  createRandomShipGrid,
   GridShipCell,
   NewShip,
 } from '../game/battlefield.ts';
@@ -22,7 +23,7 @@ export class BattlefieldStore {
   };
 
   constructor(rootStore: RootStore) {
-    makeAutoObservable(this, {
+    makeObservable(this, {
       grid: observable,
       opponentGrid: observable,
       addShipToGrid: action,
@@ -30,15 +31,21 @@ export class BattlefieldStore {
       addNewShip: action,
       userShipsCreated: computed,
       opponentShips: observable,
+      setIsShot: action,
     });
     this.rootStore = rootStore;
+    const { grid: randomGrid, userShips } = createRandomShipGrid();
+    console.log(randomGrid, userShips);
 
-    this.grid = createEmptyGrid();
-    this.userShips = { 1: [], 2: [], 3: [], 4: [] };
+    // this.grid = createEmptyGrid();
+    this.grid = randomGrid;
+    // this.userShips = { 1: [], 2: [], 3: [], 4: [] };
+    this.userShips = userShips; // todo: remove
 
+    // Object.assign(this.opponentGrid, createEmptyGrid());
     this.opponentGrid = createEmptyGrid();
     this.opponentHits = [];
-    this.opponentShips = { 1: [], 2: [], 3: [], 4: []}
+    this.opponentShips = { 1: [], 2: [], 3: [], 4: [] };
   }
 
   get userShipsCreated() {
@@ -50,7 +57,17 @@ export class BattlefieldStore {
     };
   }
 
-  addNewShip(newShip: NewShip) {
+  setIsShotSelf = (index: [number, number]) => {
+    const [r, c] = index;
+    this.grid[r][c].shot = true;
+  };
+
+  setIsShot = (index: [number, number]) => {
+    const [r, c] = index;
+    this.opponentGrid[r][c].shot = true;
+  };
+
+  addNewShip = (newShip: NewShip) => {
     const shipLength = parseInt(newShip.shipType[1]);
     const maxShipQuantityForType = 5 - shipLength;
     if (this.userShips[shipLength].length < maxShipQuantityForType) {
@@ -59,13 +76,13 @@ export class BattlefieldStore {
     } else {
       console.warn('already enough ships of length of ' + shipLength);
     }
-  }
+  };
 
   //private
-  addShipToGrid(newShip: NewShip) {
+  addShipToGrid = (newShip: NewShip) => {
     const newShipCells = createNewShipCells(newShip);
     newShipCells.forEach(({ index: [r, c], shipCellType }: GridShipCell) => {
       this.grid[r][c].shipCellType = shipCellType;
     });
-  }
+  };
 }
