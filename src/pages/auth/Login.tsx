@@ -1,28 +1,51 @@
 import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router';
+import { useState } from 'react';
 
 import authCss from './auth.module.css';
 import genCss from '../../styles/general.module.css';
+import { useStore } from '../../store/useStore.ts';
 
 function Login() {
   const { t } = useTranslation();
+  // const navigate = useNavigate();
+  const uStore = useStore().userStore;
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  const onSubmit = async () => {
+    const isSuccess = await uStore.signIn(username, password);
+    // isSuccess && navigate('/');
+  };
 
   return (
     <div>
-      <h2>Login page</h2>
+      <p>Username is: {uStore.username}</p>
+      <p>Loading is: {uStore.isLoading}</p>
+      <h3>Login page</h3>
       <div>
         <div className={authCss.fieldset}>
           <label>{t('auth.username')}</label>
           <br />
-          <input type="text" className={genCss.textInput} />
+          <input
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            type="text"
+            className={genCss.textInput}
+          />
         </div>
         <div className={authCss.fieldset}>
           <label>{t('auth.password')}</label>
           <br />
-          <input type="password" className={genCss.textInput} />
+          <input
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            type="password"
+            className={genCss.textInput}
+          />
         </div>
         <div className={authCss.fieldset}>
-          <button>{t('auth.login')}</button>
+          <button onClick={onSubmit}>{t('auth.login')}</button>
         </div>
         <br />
         <div>

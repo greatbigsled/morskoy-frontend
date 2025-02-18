@@ -4,7 +4,8 @@ import AuthLayout from './pages/auth/AuthLayout.tsx';
 import Login from './pages/auth/Login.tsx';
 import Register from './pages/auth/Register.tsx';
 import BattlefieldCreator from './pages/battlefieldCreator/BattlefieldCreator.tsx';
-import Game from "./pages/Game/Game.tsx";
+import Game from './pages/Game/Game.tsx';
+import NotFound from './pages/NotFound/NotFound.tsx';
 
 function App() {
   return (
@@ -20,6 +21,8 @@ function App() {
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
         </Route>
+
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );

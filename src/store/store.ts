@@ -7,7 +7,7 @@ export class RootStore {
   battlefieldStore: BattlefieldStore;
 
   constructor() {
-    // Bcause of passing this to sub stores, all stores can access RootStore and other stores
+    // Because of passing this to sub stores, all stores can access RootStore and other stores
     this.userStore = new UserStore(this);
     this.battlefieldStore = new BattlefieldStore(this);
   }

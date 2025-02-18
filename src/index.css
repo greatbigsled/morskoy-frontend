@@ -4,6 +4,7 @@
   box-sizing: border-box;
 }
 :root {
+  --color-red: oklch(56.6% 0.255 25.94);
   --cell-border-color: oklch(86.4% 0.075 236.79);
   --ship-border-color: oklch(66.5% 0.188 236.79);
   --preview-ship-border-color: oklch(64.3% 0.229 300.06);

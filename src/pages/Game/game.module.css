@@ -21,3 +21,20 @@
   justify-content: center;
   font-size: 12px;
 }
+
+.statusShip {
+  display: flex;
+}
+.statusShipCell {
+  margin: 1px;
+  width: 10px;
+  height: 10px;
+  background-color: oklch(from var(--ship-border-color) l c h / 0.4);
+  border: var(--ship-border) solid var(--ship-border-color);
+}
+.statusShipCellShot {
+  background-color: oklch(
+    from var(--preview-ship-border-color-invalid) l c h / 0.4
+  );
+  border: var(--ship-border) solid var(--preview-ship-border-color-invalid);
+}

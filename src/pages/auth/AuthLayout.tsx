@@ -1,11 +1,17 @@
-import { Outlet } from "react-router";
+import { Navigate, Outlet } from 'react-router';
 
-import authCss from "./auth.module.css";
+import authCss from './auth.module.css';
+import { useStore } from '../../store/useStore.ts';
 
 export default function AuthLayout() {
-  return (
+  const uStore = useStore().userStore;
+  return uStore.username ? (
+    <Navigate to="/" />
+  ) : (
     <main className={authCss.layout}>
-      <Outlet />
+      <div className={authCss.guts}>
+        <Outlet />
+      </div>
     </main>
   );
 }

@@ -1,88 +1,87 @@
-import { observable, computed, action, makeObservable } from 'mobx';
 import {
+  observable,
+  computed,
+  action,
+  makeObservable,
+  isObservableArray,
+  isObservable,
+} from 'mobx';
+import {
+  addShipToGrid,
   BattlefieldMatrix,
   createEmptyGrid,
-  createNewShipCells,
   createRandomShipGrid,
-  GridShipCell,
   NewShip,
+  setIsShot,
 } from '../game/battlefield.ts';
 import { RootStore } from './store.ts';
+import { nanoid } from 'nanoid';
+import { PreviewShip } from '../pages/battlefieldCreator/BattlefieldCreator.tsx';
 
 export class BattlefieldStore {
   rootStore: RootStore;
-  grid: BattlefieldMatrix;
+  grid: BattlefieldMatrix = createEmptyGrid();
   userShips: {
-    [key: number]: NewShip[];
-  };
+    // ship length
+    [key: number]: {
+      [id: string]: NewShip;
+    };
+  } = { 1: {}, 2: {}, 3: {}, 4: {} };
+  userShots: [number, number][] = [];
 
-  opponentGrid: BattlefieldMatrix;
-  opponentHits: [number, number][] = [];
+  opponentGrid: BattlefieldMatrix = createEmptyGrid();
+  opponentShots: [number, number][] = [];
   opponentShips: {
-    [key: number]: NewShip[];
-  };
+    // ship length
+    [key: number]: {
+      [id: string]: NewShip;
+    };
+  } = { 1: {}, 2: {}, 3: {}, 4: {} };
 
   constructor(rootStore: RootStore) {
     makeObservable(this, {
-      grid: observable,
-      opponentGrid: observable,
-      addShipToGrid: action,
+      grid: observable.deep,
+      opponentGrid: observable.deep,
       userShips: observable,
-      addNewShip: action,
-      userShipsCreated: computed,
       opponentShips: observable,
       setIsShot: action,
+      setIsShotSelf: action,
     });
     this.rootStore = rootStore;
     const { grid: randomGrid, userShips } = createRandomShipGrid();
     console.log(randomGrid, userShips);
 
-    // this.grid = createEmptyGrid();
     this.grid = randomGrid;
-    // this.userShips = { 1: [], 2: [], 3: [], 4: [] };
     this.userShips = userShips; // todo: remove
-
-    // Object.assign(this.opponentGrid, createEmptyGrid());
-    this.opponentGrid = createEmptyGrid();
-    this.opponentHits = [];
-    this.opponentShips = { 1: [], 2: [], 3: [], 4: [] };
-  }
-
-  get userShipsCreated() {
-    return {
-      1: this.userShips[1].length === 4,
-      2: this.userShips[2].length === 3,
-      3: this.userShips[3].length === 2,
-      4: this.userShips[4].length === 1,
-    };
   }
 
   setIsShotSelf = (index: [number, number]) => {
     const [r, c] = index;
     this.grid[r][c].shot = true;
+    this.userShots.push(index);
   };
 
   setIsShot = (index: [number, number]) => {
     const [r, c] = index;
     this.opponentGrid[r][c].shot = true;
+    this.opponentShots.push(index);
   };
 
-  addNewShip = (newShip: NewShip) => {
+  createShipFromPreview = (previewShip: PreviewShip) => {
+    const newShip = {
+      id: nanoid(),
+      index: previewShip.shipCells[0].index,
+      shipType: previewShip.shipType,
+    };
     const shipLength = parseInt(newShip.shipType[1]);
     const maxShipQuantityForType = 5 - shipLength;
-    if (this.userShips[shipLength].length < maxShipQuantityForType) {
-      this.userShips[shipLength].push(newShip);
-      this.addShipToGrid(newShip);
+    const canAddMoreShips =
+      Object.keys(this.userShips[shipLength]).length < maxShipQuantityForType;
+    if (canAddMoreShips) {
+      this.userShips[shipLength][newShip.id] = newShip;
+      this.grid = addShipToGrid(this.grid, newShip);
     } else {
       console.warn('already enough ships of length of ' + shipLength);
     }
-  };
-
-  //private
-  addShipToGrid = (newShip: NewShip) => {
-    const newShipCells = createNewShipCells(newShip);
-    newShipCells.forEach(({ index: [r, c], shipCellType }: GridShipCell) => {
-      this.grid[r][c].shipCellType = shipCellType;
-    });
   };
 }

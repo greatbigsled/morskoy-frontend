@@ -1,9 +1,21 @@
 .layout {
+  display: grid;
+  justify-content: center;
+  align-items: center;
   padding: 20px;
   border: 2px dashed darkorchid;
 }
+.guts {
+}
+
 
 .fieldset {
-  padding: 10px;
+  padding: 10px 0;
   text-align: left;
+}
+
+.error {
+  color: var(--color-red);
+  font-size: 14px;
+  font-weight: bold;
 }

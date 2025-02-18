@@ -4,25 +4,41 @@ import fieldCss from '../../game/battlefield/battlefield.module.css';
 import { Battlefield } from '../../game/battlefield/Battlefield.tsx';
 import {
   BCell,
-  createPreviewShip,
   ShipType,
   GridShipCell,
   isValidShipPlacement,
+  createPreviewShipCells,
 } from '../../game/battlefield.ts';
 import { useStore } from '../../store/useStore.ts';
+
+export type PreviewShip = {
+  isValid: boolean;
+  shipCells: GridShipCell[];
+  shipType: ShipType;
+};
 
 const BattlefieldCreator = () => {
   const bfStore = useStore().battlefieldStore;
   const [newShip, setNewShip] = useState<{
     shipType: ShipType;
   } | null>(null);
+  const [previewShip, setPreviewShip] = useState<null | PreviewShip>(null);
+
+  const hasEnoughShipsOf = (shipLength: number) => {
+    const shipsOfGivenLength = Object.keys(
+      bfStore.userShips[shipLength],
+    ).length;
+    const maxShipQuantityForType = 5 - shipLength;
+    return shipsOfGivenLength === maxShipQuantityForType;
+  };
+
+  // const [createdShips, setCreatedShip] = useState<{
+  //   [shipLength: number]: [];
+  // } | null>(null);
 
   const onCellClick = (cell: BCell) => {
     if (previewShip && previewShip.isValid) {
-      bfStore.addNewShip({
-        index: previewShip.shipCells[0].index,
-        shipType: previewShip.shipType,
-      });
+      bfStore.createShipFromPreview(previewShip);
       setNewShip(null);
       setPreviewShip(null);
     }
@@ -31,14 +47,12 @@ const BattlefieldCreator = () => {
     }
   };
 
-  const [previewShip, setPreviewShip] = useState<null | {
-    isValid: boolean;
-    shipCells: GridShipCell[];
-    shipType: ShipType;
-  }>(null);
   const onCellMouseEnter = (cell: BCell) => {
     if (newShip) {
-      const previewShipCells = createPreviewShip(cell.index, newShip?.shipType);
+      const previewShipCells = createPreviewShipCells(
+        cell.index,
+        newShip?.shipType,
+      );
       setPreviewShip({
         isValid: isValidShipPlacement(bfStore.grid, {
           index: previewShipCells[0].index,
@@ -58,7 +72,7 @@ const BattlefieldCreator = () => {
           <div>
             <div>
               <button
-                disabled={bfStore.userShipsCreated[4]}
+                disabled={hasEnoughShipsOf(4)}
                 onClick={() => setNewShip({ shipType: 'H4' })}
                 className={fieldCss.ship4}
               >
@@ -66,7 +80,7 @@ const BattlefieldCreator = () => {
               </button>
               <br />
               <button
-                disabled={bfStore.userShipsCreated[3]}
+                disabled={hasEnoughShipsOf(3)}
                 onClick={() => setNewShip({ shipType: 'H3' })}
                 className={fieldCss.ship3}
               >
@@ -74,7 +88,7 @@ const BattlefieldCreator = () => {
               </button>
               <br />
               <button
-                disabled={bfStore.userShipsCreated[2]}
+                disabled={hasEnoughShipsOf(2)}
                 onClick={() => setNewShip({ shipType: 'H2' })}
                 className={fieldCss.ship2}
               >
@@ -82,7 +96,7 @@ const BattlefieldCreator = () => {
               </button>
               <br />
               <button
-                disabled={bfStore.userShipsCreated[1]}
+                disabled={hasEnoughShipsOf(1)}
                 onClick={() => setNewShip({ shipType: 'H1' })}
                 className={fieldCss.ship1}
               >

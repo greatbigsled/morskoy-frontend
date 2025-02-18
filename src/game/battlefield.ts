@@ -1,4 +1,5 @@
 import cloneDeep from 'lodash-es/cloneDeep';
+import { nanoid } from 'nanoid';
 
 const MAX_INDEX = 10;
 const TEN_NUM_ARRAY = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -17,16 +18,14 @@ export type ShipCellType =
 export type BCell = {
   index: [number, number];
   playIndex: [number, string];
-  userShip: {
-    length: number;
-    index: number;
-  } | null;
+  shipId: string | null;
   shipCellType: ShipCellType | null;
   shot: boolean;
 };
 export type BattlefieldRow = BCell[];
 export type BattlefieldMatrix = BattlefieldRow[];
 export type NewShip = {
+  id: string;
   index: [number, number];
   shipType: ShipType;
 };
@@ -41,7 +40,7 @@ export function createEmptyGrid(): BattlefieldMatrix {
       return {
         index: [rowIndex, cellIndex],
         playIndex: [numIndex, alphaIndex],
-        userShip: null,
+        shipId: null,
         shipCellType: null,
         shot: false,
       } as BCell;
@@ -51,7 +50,9 @@ export function createEmptyGrid(): BattlefieldMatrix {
   return outGrid;
 }
 
-function createGridShipCells(newShip: NewShip): Array<GridShipCell> {
+function createGridShipCells(
+  newShip: Omit<NewShip, 'id'>,
+): Array<GridShipCell> {
   const { index: startIndex, shipType } = newShip;
   const cellCount = parseInt(shipType[1]);
   const isHorizontal = shipType.startsWith('H');
@@ -108,16 +109,7 @@ export function createNewShipCells(newShip: NewShip): Array<GridShipCell> {
   return createGridShipCells(newShip);
 }
 
-export function addShipToGrid(grid: BattlefieldMatrix, newShip: NewShip) {
-  const newGrid = cloneDeep(grid);
-  const newShipCells = createNewShipCells(newShip);
-  newShipCells.forEach(({ index: [r, c], shipCellType }: GridShipCell) => {
-    newGrid[r][c].shipCellType = shipCellType;
-  });
-  return newGrid;
-}
-
-export function createPreviewShip(
+export function createPreviewShipCells(
   hoverIndex: [number, number],
   shipType: ShipType,
 ) {
@@ -155,7 +147,7 @@ export function createPreviewShip(
 }
 export function isValidShipPlacement(
   grid: BattlefieldMatrix,
-  newShip: NewShip,
+  newShip: Omit<NewShip, 'id'>,
 ) {
   const shipCells = createGridShipCells(newShip);
   const isValid = shipCells.every((shipCell: GridShipCell) => {
@@ -172,13 +164,27 @@ export function isValidShipPlacement(
   return isValid;
 }
 
+export function addShipToGrid(grid: BattlefieldMatrix, newShip: NewShip) {
+  const newGrid = cloneDeep(grid);
+  const newShipCells = createNewShipCells(newShip);
+  newShipCells.forEach(({ index: [r, c], shipCellType }: GridShipCell) => {
+    newGrid[r][c].shipId = newShip.id;
+    newGrid[r][c].shipCellType = shipCellType;
+  });
+  return newGrid;
+}
+
 export function createRandomShipGrid() {
   let newGrid = createEmptyGrid();
-  const userShips: { [key: number]: NewShip[] } = {
-    1: [],
-    2: [],
-    3: [],
-    4: [],
+  const userShips: {
+    [key: number]: {
+      [id: string]: NewShip;
+    };
+  } = {
+    1: {},
+    2: {},
+    3: {},
+    4: {},
   };
   const shipLengths = [4, 3, 2, 1];
   shipLengths.forEach((shipLength) => {
@@ -198,12 +204,13 @@ export function createRandomShipGrid() {
       );
       const shipType = (shipDirection + shipLength) as ShipType;
       const newShip: NewShip = {
+        id: nanoid(),
         index: [potentialRow, potentialCell],
         shipType,
       };
       if (isValidShipPlacement(newGrid, newShip)) {
         newGrid = addShipToGrid(newGrid, newShip);
-        userShips[shipLength].push(newShip);
+        userShips[shipLength][newShip.id] = newShip;
         created = created + 1;
       }
     }
@@ -213,4 +220,11 @@ export function createRandomShipGrid() {
     grid: newGrid,
     userShips,
   };
+}
+
+export function setIsShot(grid: BattlefieldMatrix, index: [number, number]) {
+  const newGrid = cloneDeep(grid);
+  const [r, c] = index;
+  newGrid[r][c].shot = true;
+  return newGrid;
 }
