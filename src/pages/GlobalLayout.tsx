@@ -3,10 +3,14 @@ import { NavLink, Outlet } from 'react-router';
 import css from './globalLayout.module.css';
 import { useTranslation } from 'react-i18next';
 import { useStore } from '../store/useStore.ts';
+import { observer } from 'mobx-react-lite';
 
-export default function GlobalLayout() {
+const GlobalLayout = observer(() => {
   const { t } = useTranslation();
   const uStore = useStore().userStore;
+  const onLogout = () => {
+    uStore.logout();
+  };
 
   return (
     <main className={css.main}>
@@ -15,7 +19,7 @@ export default function GlobalLayout() {
         <span>username: {uStore.username}</span>
         {uStore.username ? (
           <div>
-            <button onClick={uStore.logout}>Log out</button>
+            <button onClick={onLogout}>Log out</button>
           </div>
         ) : (
           <div>
@@ -33,4 +37,5 @@ export default function GlobalLayout() {
       </footer>
     </main>
   );
-}
+});
+export default GlobalLayout;

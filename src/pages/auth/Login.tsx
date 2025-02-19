@@ -15,7 +15,6 @@ function Login() {
 
   const onSubmit = async () => {
     const isSuccess = await uStore.signIn(username, password);
-    // isSuccess && navigate('/');
   };
 
   return (

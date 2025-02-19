@@ -2,8 +2,9 @@ import { Navigate, Outlet } from 'react-router';
 
 import authCss from './auth.module.css';
 import { useStore } from '../../store/useStore.ts';
+import { observer } from 'mobx-react-lite';
 
-export default function AuthLayout() {
+const AuthLayout = observer(() => {
   const uStore = useStore().userStore;
   return uStore.username ? (
     <Navigate to="/" />
@@ -14,4 +15,6 @@ export default function AuthLayout() {
       </div>
     </main>
   );
-}
+});
+
+export default AuthLayout;

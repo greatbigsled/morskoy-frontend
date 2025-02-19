@@ -1,6 +1,9 @@
-import { makeObservable, observable, runInAction } from 'mobx';
+import { action, makeObservable, observable, runInAction } from 'mobx';
 import { RootStore } from './store.ts';
 import { config } from '../config.ts';
+import { jwtDecode } from 'jwt-decode';
+
+const ACCESS_TOKEN_KEY = 'accessToken';
 
 async function request(url: string, props?: RequestInit) {
   const { method, body, ...rest } = props || {};
@@ -27,9 +30,21 @@ export class UserStore {
     makeObservable(this, {
       username: observable,
       id: observable,
+      initUser: action,
     });
     this.rootStore = rootStore;
+    this.initUser();
   }
+
+  initUser = () => {
+    const accessToken = localStorage.getItem('accessToken');
+    if (accessToken) {
+      const decoded: { id: number; login: string } = jwtDecode(accessToken);
+      const { id, login } = decoded;
+      this.username = login;
+      this.id = `${id}`;
+    }
+  };
 
   async signIn(username: string, password: string) {
     this.error = null;
@@ -46,6 +61,7 @@ export class UserStore {
       runInAction(() => {
         this.username = username;
         this.accessToken = res.accessToken;
+        localStorage.setItem(ACCESS_TOKEN_KEY, res.accessToken);
       });
       return true;
     } catch (e) {
@@ -76,6 +92,7 @@ export class UserStore {
       runInAction(() => {
         this.username = username;
         this.accessToken = res.accessToken;
+        localStorage.setItem(ACCESS_TOKEN_KEY, res.accessToken);
       });
       return true;
     } catch (e) {
@@ -113,14 +130,13 @@ export class UserStore {
       // });
     }
   }
-  async logout() {
+
+  logout = () => {
     this.error = null;
     this.isLoading = true;
-    try {
-      // const res = await request('/api/auth/logout', {
-      //   method: 'POST',
-      // });
+    localStorage.removeItem(ACCESS_TOKEN_KEY);
 
+    try {
       runInAction(() => {
         this.username = null;
         this.accessToken = null;

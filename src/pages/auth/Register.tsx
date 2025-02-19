@@ -14,7 +14,8 @@ function Register() {
   const [passwordRepeat, setPasswordRepeat] = useState('');
   const [error, setError] = useState<null | string>(null);
 
-  const onSubmit = () => {
+  const onSubmit = (e) => {
+    e.preventDefault();
     if (password !== passwordRepeat) {
       setError('Passwords do not match');
     } else {
@@ -25,8 +26,6 @@ function Register() {
 
   return (
     <div>
-      <p>Username is: {uStore.username}</p>
-      <p>Loading is: {uStore.isLoading}</p>
       <h2>{t('auth.createAccount')}</h2>
       <form onSubmit={onSubmit}>
         <div className={authCss.fieldset}>
